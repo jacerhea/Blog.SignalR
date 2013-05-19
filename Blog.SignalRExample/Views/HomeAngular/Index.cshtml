@@ -1,0 +1,91 @@
+﻿@{
+    ViewBag.Title = "Angular Example Page";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html ng-app>
+>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title</title>
+    @Styles.Render("~/Content/css")
+
+    @Scripts.Render("~/bundles/jquery")
+    <script src="~/Scripts/jquery.signalR-1.0.1.js" type="text/javascript"></script>
+    <script src="~/signalr/hubs" type="text/javascript"></script>
+    <script src="~/Scripts/underscore.js" type="text/javascript"></script>
+    <script src="~/Scripts/angular.js" type="text/javascript"></script>
+</head>
+<body ng-controller="AngularExampleCtrl">
+    <div class="page">
+        <header>
+            <div id="title">
+                <h1>Real Time Pricing</h1>
+            </div>
+        </header>
+        <section id="main">
+            <h2>Stock Tracker (w/ angular)</h2>
+            <table>
+                <tr>
+                    <th>Symbol
+                    </th>
+                    <th>Price
+                    </th>
+                    <th>Last Updated
+                    </th>
+                </tr>
+                <tbody ng-repeat="stock in stocks">
+                    <tr>
+                        <td>{{stock.symbol}}</td>
+                        <td>{{stock.price}}</td>
+                        <td>{{stock.updated | date:'medium'}}</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            @Html.ActionLink("Go to Knockout >>", "Index", "Home")
+
+
+
+            <script type="text/javascript">
+                function Stock(symbol, price, updated) {
+                    this.symbol = symbol;
+                    this.price = price;
+                    this.updated = updated;
+                };
+
+                var model;
+
+                function AngularExampleCtrl($scope, $http, $timeout) {
+                    $http({
+                        url: "/api/Stock",
+                        dataType: "json",
+                        method: "GET",
+                    }).success(function (data) {
+                        model = _.chain(data).map(function (x) { return new Stock(x.Symbol, x.Price, new Date()); }).toArray().value();
+                        $scope.stocks = model;
+
+                        var demoHub = $.connection.demoHub;
+                        demoHub.client.UpdatePrice = function (priceUpdate) {
+                            _.chain($scope.stocks)
+                                .filter(function (stock) { return stock.symbol == priceUpdate.Symbol; })
+                                .each(function (stock) {
+                                    stock.price = priceUpdate.Price.toFixed(2);
+                                    stock.updated = new Date();
+                                });
+                            $scope.$apply();
+                        };
+
+                        // Start the connection
+                        $.connection.hub.start();
+                    });
+                }
+            </script>
+        </section>
+        <footer>
+        </footer>
+    </div>
+</body>
+</html>
