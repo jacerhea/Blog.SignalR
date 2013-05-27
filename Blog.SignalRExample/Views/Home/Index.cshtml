@@ -46,7 +46,7 @@
                 </tbody>
             </table>
             @Html.ActionLink("Go to Angular >>", "Index", "HomeAngular")
-            
+
 
             <script type="text/javascript">
                 function Stock(symbol, price, updated) {
@@ -56,21 +56,12 @@
                 };
 
                 $(function () {
-                    var now = new Date();
-                    var viewModel = {
-                        stocks:
-                            [new Stock("AAPL", 648.11, now),
-                                new Stock("MSFT", 30.90, now),
-                                new Stock("FB", 19.05, now),
-                                new Stock("YHOO", 15.03, now)]
-                    };
-
+                    var viewModel = { stocks: ko.observableArray() };
 
                     $(function () {
-                        // Proxy created on the fly
                         var demoHub = $.connection.demoHub;
                         demoHub.client.UpdatePrice = function (priceUpdate) {
-                            _.chain(viewModel.stocks)
+                            _.chain(viewModel.stocks())
                                 .filter(function (stock) { return stock.symbol == priceUpdate.Symbol; })
                                 .each(function (stock) {
                                     stock.price(priceUpdate.Price.toFixed(2));
@@ -78,11 +69,22 @@
                                 });
                         };
 
-                        // Start the connection
-                        $.connection.hub.start();
-                    });
+                        $.ajax({
+                            url: '@Url.RouteUrl("DefaultApi", new { httproute = "", controller = "Stock" })',
+                            success: function (data) {
+                                // Proxy created on the fly
+                                _.chain(data)
+                                    .each(function (stock) {
+                                        viewModel.stocks.push(new Stock(stock.Symbol, stock.Price, new Date()));
+                                    });
 
-                    ko.applyBindings(viewModel);
+                                ko.applyBindings(viewModel);
+
+                                // Start the connection
+                                $.connection.hub.start();
+                            }
+                        });
+                    });
                 });
             </script>
         </section>

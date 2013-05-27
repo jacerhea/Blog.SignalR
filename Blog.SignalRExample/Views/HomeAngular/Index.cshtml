@@ -48,20 +48,23 @@
             @Html.ActionLink("Go to Knockout >>", "Index", "Home")
 
 
+        </section>
+        <footer>
+        </footer>
+    </div>
+</body>
+<script type="text/javascript">
+    function Stock(symbol, price, updated) {
+        this.symbol = symbol;
+        this.price = price;
+        this.updated = updated;
+    };
 
-            <script type="text/javascript">
-                function Stock(symbol, price, updated) {
-                    this.symbol = symbol;
-                    this.price = price;
-                    this.updated = updated;
-                };
+    var model;
 
-                var model;
-
-                function AngularExampleCtrl($scope, $http, $timeout) {
-                    $http({
-                        url: "/api/Stock",
-                        dataType: "json",
+    function AngularExampleCtrl($scope, $http, $timeout) {
+        $http({
+            url: '@Url.RouteUrl("DefaultApi", new { httproute = "", controller = "Stock" })',
                         method: "GET",
                     }).success(function (data) {
                         model = _.chain(data).map(function (x) { return new Stock(x.Symbol, x.Price, new Date()); }).toArray().value();
@@ -82,10 +85,5 @@
                         $.connection.hub.start();
                     });
                 }
-            </script>
-        </section>
-        <footer>
-        </footer>
-    </div>
-</body>
+</script>
 </html>
