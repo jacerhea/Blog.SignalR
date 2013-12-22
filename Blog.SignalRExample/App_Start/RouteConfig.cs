@@ -11,7 +11,6 @@ namespace Blog.SignalRExample
     {
         public static void RegisterRoutes(RouteCollection routes)
         {
-            RouteTable.Routes.MapHubs();
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
             routes.MapRoute(
