@@ -13,90 +13,73 @@
     @Styles.Render("~/Content/Site.css")
 
     @Scripts.Render("~/bundles/jquery")
-    <script src="~/Scripts/jquery.signalR-2.0.1.min.js" type="text/javascript"></script>
+    <script src="~/Scripts/jquery.signalR-2.0.3.min.js" type="text/javascript"></script>
     <script src="~/signalr/hubs" type="text/javascript"></script>
     <script src="~/Scripts/underscore.js" type="text/javascript"></script>
     <script src="~/Scripts/angular.js" type="text/javascript"></script>
     <script src="~/Scripts/app.js" type="text/javascript"></script>
 </head>
-<body ng-controller="AngularExampleCtrl">
-    <div class="navbar navbar-inverse navbar-fixed-top">
+    <body ng-controller="AngularExampleCtrl">
+        @Html.Partial("_Navigation")
         <div class="container">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                @Html.ActionLink("Signalr Examples", "Index", "Home", null, new { @class = "navbar-brand" })
-            </div>
-            <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-                    <li>@Html.ActionLink("Knockout", "Index", "Home")</li>
-                    <li class="active">@Html.ActionLink("Angular", "Index", "HomeAngular")</li>
-                </ul>
-            </div>
-        </div>
-    </div>
-    <div class="container">
-        <h2>Stock Tracker (w/ angular)</h2>
-        <table class="table">
-            <tr>
-                <th>
-                    Symbol
-                </th>
-                <th>
-                    Price
-                </th>
-                <th>
-                    Last Updated
-                </th>
-            </tr>
-            <tbody ng-repeat="stock in stocks">
+            <h2>Stock Tracker (w/ angular)</h2>
+            <table class="table">
                 <tr>
-                    <td>{{stock.symbol}}</td>
-                    <td>{{stock.price | currency}}</td>
-                    <td>{{stock.updated | date:'medium'}}</td>
+                    <th>
+                        Symbol
+                    </th>
+                    <th>
+                        Price
+                    </th>
+                    <th>
+                        Last Updated
+                    </th>
                 </tr>
-            </tbody>
-        </table>
-        <a class="btn btn-default" href="@Url.Action("Index", "Home")" role="button">Go to Knockout &raquo;</a>
-        <hr />
-        <footer>
-            <p>&copy; @DateTime.Now.Year - Jace Rhea Blog</p>
-        </footer>
-    </div>
-</body>
-<script type="text/javascript">
-    function Stock(symbol, price, updated) {
-        this.symbol = symbol;
-        this.price = price;
-        this.updated = updated;
-    };
+                <tbody ng-repeat="stock in stocks">
+                    <tr>
+                        <td>{{stock.symbol}}</td>
+                        <td>{{stock.price | currency}}</td>
+                        <td>{{stock.updated | date:'medium'}}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <a class="btn btn-link" href="@Url.Action("Index", "Home")" role="button">Go to Knockout &raquo;</a>
+            <hr />
+            <footer>
+                <p>&copy; @DateTime.Now.Year - Jace Rhea Blog</p>
+            </footer>
+        </div>
+        <script type="text/javascript">
+            function Stock(symbol, price, updated) {
+                this.symbol = symbol;
+                this.price = price;
+                this.updated = updated;
+            };
 
-    eventsApp.controller('AngularExampleCtrl',
-        function AngularExampleCtrl($scope, $http) {
-            $http({
-                url: '@Url.RouteUrl("DefaultApi", new { httproute = "", controller = "Stock" })',
-                method: "GET",
-            }).success(function (data) {
-                $scope.stocks = _.chain(data).map(function (x) { return new Stock(x.Symbol, x.Price, new Date()); }).toArray().value();
+            eventsApp.controller('AngularExampleCtrl',
+                function AngularExampleCtrl($scope, $http) {
+                    $http({
+                        url: '@Url.RouteUrl("DefaultApi", new { httproute = "", controller = "Stock" })',
+                        method: "GET",
+                    }).success(function (data) {
+                        $scope.stocks = _.chain(data).map(function (x) { return new Stock(x.Symbol, x.Price, new Date()); }).toArray().value();
 
-                var demoHub = $.connection.demoHub;
-                demoHub.client.UpdatePrice = function (priceUpdate) {
-                    _.chain($scope.stocks)
-                        .filter(function (stock) { return stock.symbol == priceUpdate.Symbol; })
-                        .each(function (stock) {
-                            stock.price = priceUpdate.Price;
-                            stock.updated = new Date();
-                        });
-                    $scope.$apply();
-                };
+                        var demoHub = $.connection.demoHub;
+                        demoHub.client.UpdatePrice = function (priceUpdate) {
+                            _.chain($scope.stocks)
+                                .filter(function (stock) { return stock.symbol == priceUpdate.Symbol; })
+                                .each(function (stock) {
+                                    stock.price = priceUpdate.Price;
+                                    stock.updated = new Date();
+                                });
+                            $scope.$apply();
+                        };
 
-                // Start the connection
-                $.connection.hub.start();
-            });
-        }
-);
-</script>
+                        // Start the connection
+                        $.connection.hub.start();
+                    });
+                }
+            );
+        </script>
+    </body>
 </html>
