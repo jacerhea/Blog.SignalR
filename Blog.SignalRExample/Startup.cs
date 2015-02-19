@@ -1,7 +1,8 @@
-﻿using Microsoft.Owin;
+﻿using Blog.SignalRExample.App_Start;
+using Microsoft.Owin;
 using Owin;
 
-[assembly: OwinStartupAttribute(typeof(Blog.SignalRExample.App_Start.Startup))]
+[assembly: OwinStartup(typeof(Startup))]
 namespace Blog.SignalRExample.App_Start
 {
     public partial class Startup
