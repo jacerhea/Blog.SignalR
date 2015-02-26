@@ -33,7 +33,7 @@ namespace Blog.SignalRExample
 
                 while (true)
                 {
-                    hubContext.Clients.All.UpdatePrice(new Stock { Symbol = "AAPL", Price = (random.Next(620, 650) + random.NextDouble()) });
+                    hubContext.Clients.All.UpdatePrice(new Stock { Symbol = "AAPL", Price = (random.Next(100, 140) + random.NextDouble()) });
                     Thread.Sleep(500);
                 }
             });
@@ -44,7 +44,7 @@ namespace Blog.SignalRExample
 
                 while (true)
                 {
-                    hubContext.Clients.All.UpdatePrice(new Stock { Symbol = "FB", Price = (random.Next(15, 25) + random.NextDouble()) });
+                    hubContext.Clients.All.UpdatePrice(new Stock { Symbol = "FB", Price = (random.Next(60, 80) + random.NextDouble()) });
                     Thread.Sleep(1000);
                 }
             });
@@ -55,7 +55,7 @@ namespace Blog.SignalRExample
 
                 while (true)
                 {
-                    hubContext.Clients.All.UpdatePrice(new Stock { Symbol = "YHOO", Price = (random.Next(10, 20) + random.NextDouble()) });
+                    hubContext.Clients.All.UpdatePrice(new Stock { Symbol = "YHOO", Price = (random.Next(30, 50) + random.NextDouble()) });
                     Thread.Sleep(1500);
                 }
             });
@@ -66,7 +66,7 @@ namespace Blog.SignalRExample
 
                 while (true)
                 {
-                    hubContext.Clients.All.UpdatePrice(new Stock { Symbol = "MSFT", Price = (random.Next(25, 35) + random.NextDouble()) });
+                    hubContext.Clients.All.UpdatePrice(new Stock { Symbol = "MSFT", Price = (random.Next(40, 50) + random.NextDouble()) });
                     Thread.Sleep(2000);
                 }
             });
