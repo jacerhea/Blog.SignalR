@@ -84,7 +84,7 @@
                 var demoHub = $.connection.demoHub;
                 demoHub.client.UpdatePrice = function (priceUpdate) {
                     _.chain(viewModel.stocks())
-                        .filter(function (stock) { return stock.symbol == priceUpdate.Symbol; })
+                        .filter(function (stock) { return stock.symbol === priceUpdate.Symbol; })
                         .each(function (stock) {
                             stock.price(priceUpdate.Price.toFixed(2));
                             stock.updated(new Date());
